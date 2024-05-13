@@ -1,5 +1,9 @@
 ﻿@page "/counter"
-@rendermode InteractiveServer
+@using System.Net.Http
+@using System.Text.Json
+@using System.Collections.Generic
+@inject HttpClient HttpClient
+
 
 <PageTitle>Counter</PageTitle>
 
@@ -9,10 +13,68 @@
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
-<input class="" @onfocusout="FocusoutFn"  title="User Input"/>
+<h3>Meals</h3>
+
+@if (meals == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach (var meal in meals)
+    {
+        <div>
+            <h4>@meal.Meals</h4>
+           @*  <p>@meal.StrInstructions</p>
+            <img src="@meal.StrMealThumb" alt="Meal Thumbnail" /> *@
+        </div>
+    }
+}
+
+<Field>
+    <TextEdit Placeholder="Name" @onfocusout="FocusoutFn" Class="mt-1" />
+</Field>
 
 @code {
+    private List<MealsResponse> meals;
+    // public Meal[] mealList=[];
+    //public List<Meal> mealList = new List<Meal>();
+    public List<MealsResponse> data;
     private int currentCount = 0;
+
+    public HttpClient httpApi = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            //Class1[] result = System.Text.Json.JsonSerializer.Deserialize<Meal[]>(json);
+            // meals = await HttpClient.GetFromJsonAsync<List<Meal>>
+            // var res = await httpApi.GetFromJsonAsync<List<MealsResponse>>("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata");
+            // data = await HttpClient.GetFromJsonAsync<YourModel[]>("your-api-endpoint");
+            // MealsResponse mealsResponse = System.Text.Json.jsonse DeserializeObject<MealsResponse>(res);
+            var response = await HttpClient.GetAsync("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                object dd = content.Split(':');
+
+                data = JsonSerializer.Deserialize<List<MealsResponse>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            else
+            {
+                // Handle error
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+
+    }
+
+
 
     private void IncrementCount()
     {
@@ -21,6 +83,68 @@
 
     public void FocusoutFn()
     {
-        
+
+    }
+
+    public class Meal
+    {
+        public string IdMeal { get; set; }
+        public string StrMeal { get; set; }
+        public string StrDrinkAlternate { get; set; }
+        public string StrCategory { get; set; }
+        public string StrArea { get; set; }
+        public string StrInstructions { get; set; }
+        public string StrMealThumb { get; set; }
+        public string StrTags { get; set; }
+        public string StrYoutube { get; set; }
+        public string StrIngredient1 { get; set; }
+        public string StrIngredient2 { get; set; }
+        public string StrIngredient3 { get; set; }
+        public string StrIngredient4 { get; set; }
+        public string StrIngredient5 { get; set; }
+        public string StrIngredient6 { get; set; }
+        public string StrIngredient7 { get; set; }
+        public string StrIngredient8 { get; set; }
+        public string StrIngredient9 { get; set; }
+        public string StrIngredient10 { get; set; }
+        public string StrIngredient11 { get; set; }
+        public string StrIngredient12 { get; set; }
+        public string StrIngredient13 { get; set; }
+        public string StrIngredient14 { get; set; }
+        public string StrIngredient15 { get; set; }
+        public string StrIngredient16 { get; set; }
+        public string StrIngredient17 { get; set; }
+        public string StrIngredient18 { get; set; }
+        public string StrIngredient19 { get; set; }
+        public string StrIngredient20 { get; set; }
+        public string StrMeasure1 { get; set; }
+        public string StrMeasure2 { get; set; }
+        public string StrMeasure3 { get; set; }
+        public string StrMeasure4 { get; set; }
+        public string StrMeasure5 { get; set; }
+        public string StrMeasure6 { get; set; }
+        public string StrMeasure7 { get; set; }
+        public string StrMeasure8 { get; set; }
+        public string StrMeasure9 { get; set; }
+        public string StrMeasure10 { get; set; }
+        public string StrMeasure11 { get; set; }
+        public string StrMeasure12 { get; set; }
+        public string StrMeasure13 { get; set; }
+        public string StrMeasure14 { get; set; }
+        public string StrMeasure15 { get; set; }
+        public string StrMeasure16 { get; set; }
+        public string StrMeasure17 { get; set; }
+        public string StrMeasure18 { get; set; }
+        public string StrMeasure19 { get; set; }
+        public string StrMeasure20 { get; set; }
+        public string StrSource { get; set; }
+        public string StrImageSource { get; set; }
+        public string StrCreativeCommonsConfirmed { get; set; }
+        public DateTime? DateModified { get; set; }
+    }
+
+    public class MealsResponse
+    {
+        public List<Meal> Meals { get; set; }
     }
 }
