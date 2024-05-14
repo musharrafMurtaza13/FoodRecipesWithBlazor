@@ -1,45 +1,45 @@
-﻿@page "/counter"
+@page "/counter"
 @using System.Net.Http
 @using System.Text.Json
 @using System.Collections.Generic
 @inject HttpClient HttpClient
 
 
-<PageTitle>Counter</PageTitle>
-
-<h1>Counter</h1>
+<PageTitle>Meals</PageTitle>
+<Field>
+    <TextEdit Placeholder="Name" @onfocusout="FocusoutFn" Class="mt-1 mb-1" />
+</Field>
+@* <h1>Counter</h1>
 
 <p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button> *@
 
-<h3>Meals</h3>
 
-@if (meals == null)
+
+@if (data == null)
 {
     <p>Loading...</p>
 }
 else
 {
-    @foreach (var meal in meals)
+    @foreach (var meal in data.Meals)
     {
         <div>
-            <h4>@meal.Meals</h4>
-           @*  <p>@meal.StrInstructions</p>
-            <img src="@meal.StrMealThumb" alt="Meal Thumbnail" /> *@
+            <h4>@meal.StrMeal</h4>
+            <p>@meal.StrInstructions</p>
+            <img src="@meal.StrMealThumb" alt="Meal Thumbnail" />
         </div>
     }
 }
 
-<Field>
-    <TextEdit Placeholder="Name" @onfocusout="FocusoutFn" Class="mt-1" />
-</Field>
+
 
 @code {
     private List<MealsResponse> meals;
     // public Meal[] mealList=[];
     //public List<Meal> mealList = new List<Meal>();
-    public List<MealsResponse> data;
+    public MealsResponse data;
     private int currentCount = 0;
 
     public HttpClient httpApi = new HttpClient();
@@ -53,13 +53,13 @@ else
             // var res = await httpApi.GetFromJsonAsync<List<MealsResponse>>("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata");
             // data = await HttpClient.GetFromJsonAsync<YourModel[]>("your-api-endpoint");
             // MealsResponse mealsResponse = System.Text.Json.jsonse DeserializeObject<MealsResponse>(res);
-            var response = await HttpClient.GetAsync("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata");
+            var response = await HttpClient.GetAsync("https://www.themealdb.com/api/json/v1/1/search.php?f=a");
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 object dd = content.Split(':');
 
-                data = JsonSerializer.Deserialize<List<MealsResponse>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                data = JsonSerializer.Deserialize<MealsResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             }
             else
             {
